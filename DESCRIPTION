@@ -1,0 +1,43 @@
+Package: PhysioECG
+Title: ECG Analysis Functions for PhysioExperiment Objects
+Version: 0.2.0
+Authors@R:
+    person(given = "Yusuke",
+           family = "Matsui",
+           role = c("aut", "cre"),
+           email = "you@example.com")
+Author: Yusuke Matsui
+Maintainer: Yusuke Matsui <you@example.com>
+Description: Provides electrocardiography (ECG) analysis functions for
+    PhysioExperiment objects. Includes R-peak detection (adaptive Pan-Tompkins),
+    RR interval computation, HRV time-domain metrics (SDNN, RMSSD, pNN50),
+    HRV frequency-domain analysis (VLF, LF, HF power), nonlinear HRV
+    (Poincare, Sample Entropy, DFA), ECG morphology analysis (QRS boundaries,
+    QT/QTc intervals), and signal quality assessment with ectopic beat
+    correction.
+Depends:
+    R (>= 4.2),
+    PhysioCore
+Imports:
+    SummarizedExperiment,
+    S4Vectors,
+    stats
+Suggests:
+    knitr,
+    rmarkdown,
+    signal,
+    testthat (>= 3.2.0)
+VignetteBuilder: knitr
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Collate:
+    'ecg-data.R'
+    'ecg-peaks.R'
+    'ecg-morphology.R'
+    'ecg-hrv-time.R'
+    'ecg-hrv-freq.R'
+    'ecg-hrv-nonlinear.R'
+    'ecg-quality.R'
+    'zzz.R'
+RoxygenNote: 7.3.3
