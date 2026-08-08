@@ -1,0 +1,343 @@
+# PhysioECG ![PhysioECG logo](reference/figures/logo.png)
+
+**ECG Analysis Functions for PhysioExperiment Objects**
+
+PhysioECG provides electrocardiography (ECG) analysis functions for the
+PhysioExperiment ecosystem. With 18 exported functions, it delivers a
+complete ECG analysis pipeline – from R-peak detection using an adaptive
+Pan-Tompkins algorithm, through RR interval computation and ectopic beat
+correction, to comprehensive heart rate variability (HRV) analysis
+across time-domain, frequency-domain, and nonlinear methods. It also
+includes ECG morphology analysis (PQRST waveform delineation, clinical
+interval measurement) and signal quality assessment.
+
+## Installation
+
+You can install PhysioECG from
+[r-universe](https://x-biosignal.r-universe.dev):
+
+``` r
+
+install.packages("PhysioECG",
+  repos = c("https://x-biosignal.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Or install the development version from GitHub:
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("x-biosignal/PhysioECG")
+```
+
+## Quick Start
+
+``` r
+
+library(PhysioECG)
+
+# Generate a simulated ECG signal (10 seconds at 500 Hz, 72 bpm)
+pe <- make_ecg(n_time = 5000, sr = 500, heart_rate = 72)
+
+# Detect R-peaks using the adaptive Pan-Tompkins algorithm
+peaks <- ecgDetectRpeaks(pe)
+head(peaks)
+#>   channel sample time_sec amplitude
+#> 1       1    347    0.692      1.50
+#> 2       1    764    1.526      1.50
+#> ...
+
+# Compute RR intervals
+rr <- ecgRRintervals(pe, peaks)
+
+# Time-domain HRV metrics
+hrv_time <- ecgHRVtime(rr)
+hrv_time
+#>   channel mean_rr   sdnn rmssd pnn50 mean_hr
+#> 1       1  833.33   1.23  0.87     0   72.00
+
+# Frequency-domain HRV analysis (Welch PSD)
+hrv_freq <- ecgHRVfreq(rr, method = "welch")
+
+# Nonlinear HRV (Poincare, Sample Entropy, DFA)
+hrv_nl <- ecgHRVnonlinear(rr)
+
+# ECG morphology: delineate P, QRS, T waves
+delin <- ecgDelineate(pe, peaks)
+intervals <- ecgIntervals(delin, sr = 500)
+head(intervals)
+#>   channel beat  pr_ms  qt_ms  qtc_ms qrs_ms  rr_ms
+#> 1       1    1  126.0  360.0   394.1   80.0  833.3
+```
+
+## Features
+
+### R-Peak Detection
+
+Adaptive dual-threshold Pan-Tompkins detector with automatic
+inverted-signal handling:
+
+- [`ecgDetectRpeaks()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDetectRpeaks.md)
+  – detect R-peaks using bandpass filtering (5–15 Hz), differentiation,
+  squaring, moving-window integration, and adaptive thresholding
+
+### RR Interval Analysis
+
+RR interval computation and ectopic beat correction:
+
+- [`ecgRRintervals()`](https://x-biosignal.github.io/PhysioECG/reference/ecgRRintervals.md)
+  – compute RR intervals from detected R-peaks
+- [`ecgQualityCheck()`](https://x-biosignal.github.io/PhysioECG/reference/ecgQualityCheck.md)
+  – detect ectopic beats using local median comparison
+- [`ecgRRcorrect()`](https://x-biosignal.github.io/PhysioECG/reference/ecgRRcorrect.md)
+  – correct ectopic beats by interpolation or removal
+
+### HRV Time-Domain Analysis
+
+Standard time-domain HRV metrics per ESC/NASPE Task Force guidelines:
+
+- [`ecgHRVtime()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVtime.md)
+  – SDNN, RMSSD, pNN50, mean RR, mean heart rate
+
+### HRV Frequency-Domain Analysis
+
+Power spectral density estimation with standard frequency band
+integration:
+
+- [`ecgHRVfreq()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVfreq.md)
+  – VLF (0.003–0.04 Hz), LF (0.04–0.15 Hz), HF (0.15–0.4 Hz) power,
+  LF/HF ratio, total power
+- Supports Welch’s method (resampled FFT) and Lomb-Scargle periodogram
+
+### HRV Nonlinear Analysis
+
+Nonlinear dynamics and complexity measures:
+
+- [`ecgHRVnonlinear()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVnonlinear.md)
+  – convenience wrapper combining all nonlinear metrics
+- [`ecgHRVpoincare()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVpoincare.md)
+  – Poincare plot descriptors (SD1, SD2, SD1/SD2 ratio)
+- [`ecgSampleEntropy()`](https://x-biosignal.github.io/PhysioECG/reference/ecgSampleEntropy.md)
+  – sample entropy for signal complexity/regularity
+- [`ecgDFA()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFA.md)
+  – detrended fluctuation analysis (alpha1 short-range, alpha2
+  long-range)
+
+### ECG Morphology Analysis
+
+Waveform delineation and clinical interval measurement:
+
+- [`ecgDelineate()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDelineate.md)
+  – identify QRS complex boundaries, P-wave and T-wave peaks, and T-wave
+  end for each beat
+- [`ecgIntervals()`](https://x-biosignal.github.io/PhysioECG/reference/ecgIntervals.md)
+  – compute PR interval, QRS duration, QT interval, and QTc (Bazett
+  correction)
+
+### Signal Quality Assessment
+
+Signal quality evaluation and baseline correction:
+
+- [`ecgSignalQuality()`](https://x-biosignal.github.io/PhysioECG/reference/ecgSignalQuality.md)
+  – per-channel SNR, baseline wander, saturation ratio, and composite
+  quality score
+- [`ecgBaselineCorrect()`](https://x-biosignal.github.io/PhysioECG/reference/ecgBaselineCorrect.md)
+  – remove baseline wander using highpass moving-average or
+  running-median subtraction
+
+### Simulated ECG Data
+
+Synthetic ECG generators for testing and demonstration:
+
+- [`make_ecg()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg.md)
+  – regular ECG with Gaussian-shaped R-peaks at fixed heart rate
+- [`make_ecg_pqrst()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg_pqrst.md)
+  – realistic PQRST morphology with known fiducial points for validation
+- [`make_ecg_irregular()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg_irregular.md)
+  – ECG with simulated ectopic (premature) beats and compensatory pauses
+- [`make_ecg_noisy()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg_noisy.md)
+  – ECG contaminated with baseline wander, powerline interference, and
+  broadband noise
+
+## Dependencies
+
+- **R** (\>= 4.2)
+- **[PhysioCore](https://github.com/x-biosignal/PhysioCore)**
+- **SummarizedExperiment**
+- **S4Vectors**
+- **stats**
+
+## PhysioExperiment Ecosystem
+
+PhysioECG is the ECG analysis module of the PhysioExperiment ecosystem,
+a suite of R packages for multi-modal physiological signal analysis:
+
+| Package | Description |
+|----|----|
+| [PhysioCore](https://github.com/x-biosignal/PhysioCore) | Core data structures and accessors |
+| [PhysioIO](https://github.com/x-biosignal/PhysioIO) | File I/O (EDF, HDF5, BIDS, CSV, MAT) |
+| [PhysioPreprocess](https://github.com/x-biosignal/PhysioPreprocess) | Preprocessing (filters, ICA, resampling) |
+| [PhysioAnalysis](https://github.com/x-biosignal/PhysioAnalysis) | Analysis and visualization |
+| **PhysioECG** | ECG analysis and HRV |
+| [PhysioEDA](https://github.com/x-biosignal/PhysioEDA) | Electrodermal activity analysis |
+
+Visit the [r-universe page](https://x-biosignal.r-universe.dev) to
+browse all available packages.
+
+## References
+
+- Pan, J. & Tompkins, W.J. (1985). “A real-time QRS detection
+  algorithm.” *IEEE Transactions on Biomedical Engineering*, 32(3),
+  230–236.
+- Task Force of the ESC and NASPE (1996). “Heart rate variability:
+  Standards of measurement, physiological interpretation and clinical
+  use.” *Circulation*, 93(5), 1043–1065.
+- Shaffer, F. & Ginsberg, J.P. (2017). “An overview of heart rate
+  variability metrics and norms.” *Frontiers in Public Health*, 5, 258.
+- Richman, J.S. & Moorman, J.R. (2000). “Physiological time-series
+  analysis using approximate entropy and sample entropy.” *American
+  Journal of Physiology*, 278(6), H2039–H2049.
+- Peng, C.-K., et al. (1994). “Mosaic organization of DNA nucleotides.”
+  *Physical Review E*, 49(2), 1685–1689.
+
+## License
+
+MIT License. See
+[LICENSE](https://x-biosignal.github.io/PhysioECG/LICENSE) for details.
+
+## Author
+
+Yusuke Matsui
+
+## Governance & support
+
+Part of the [Physio ecosystem](https://x-biosignal.r-universe.dev).
+Community and policy documents live in the umbrella repository:
+
+- [Code of
+  Conduct](https://github.com/x-biosignal/PhysioExperiment/blob/main/CODE_OF_CONDUCT.md)
+- [Contributing](https://github.com/x-biosignal/PhysioExperiment/blob/main/CONTRIBUTING.md)
+- [Governance](https://github.com/x-biosignal/PhysioExperiment/blob/main/GOVERNANCE.md)
+- [Support](https://github.com/x-biosignal/PhysioExperiment/blob/main/SUPPORT.md)
+- [Security
+  policy](https://github.com/x-biosignal/PhysioExperiment/blob/main/SECURITY.md)
+- [Deprecation & lifecycle
+  policy](https://github.com/x-biosignal/PhysioExperiment/blob/main/DEPRECATION.md)
+
+# Package index
+
+## All functions
+
+- [`breathingRate()`](https://x-biosignal.github.io/PhysioECG/reference/breathingRate.md)
+  : Estimate breathing rate
+- [`dfaThresholdCrossings()`](https://x-biosignal.github.io/PhysioECG/reference/dfaThresholdCrossings.md)
+  : Detect DFA-a1 threshold crossings
+- [`ecgAnalyze()`](https://x-biosignal.github.io/PhysioECG/reference/ecgAnalyze.md)
+  : Aggregate ECG HRV and Morphology Metrics
+- [`ecgBaselineCorrect()`](https://x-biosignal.github.io/PhysioECG/reference/ecgBaselineCorrect.md)
+  : Correct Baseline Wander in ECG Signals
+- [`ecgBeatSQI()`](https://x-biosignal.github.io/PhysioECG/reference/ecgBeatSQI.md)
+  : Beat-level Signal Quality Index (bSQI)
+- [`ecgBeatSQIgate()`](https://x-biosignal.github.io/PhysioECG/reference/ecgBeatSQIgate.md)
+  : Accept/reject ECG channels by bSQI
+- [`ecgDFA()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFA.md)
+  : Detrended Fluctuation Analysis of RR Intervals
+- [`ecgDFArolling()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFArolling.md)
+  : Rolling (time-resolved) DFA alpha1
+- [`ecgDelineate()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDelineate.md)
+  : Delineate ECG Waveform Morphology
+- [`ecgDetectAF()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDetectAF.md)
+  : Detect Atrial Fibrillation / Frequent Ectopy from RR Irregularity
+- [`ecgDetectPVC()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDetectPVC.md)
+  : Detect Premature Ventricular Contractions (PVCs)
+- [`ecgDetectRpeaks()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDetectRpeaks.md)
+  : Detect R-Peaks in ECG Signal
+- [`ecgEDR()`](https://x-biosignal.github.io/PhysioECG/reference/ecgEDR.md)
+  : ECG-Derived Respiration (EDR)
+- [`ecgEctopicBurden()`](https://x-biosignal.github.io/PhysioECG/reference/ecgEctopicBurden.md)
+  : Ectopic Beat Burden
+- [`ecgHRR()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRR.md)
+  : Heart-Rate Recovery (HRR)
+- [`ecgHRT()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRT.md)
+  : Heart-Rate Turbulence (HRT)
+- [`ecgHRVfreq()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVfreq.md)
+  : HRV Frequency-Domain Analysis
+- [`ecgHRVgeometric()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVgeometric.md)
+  : Geometric HRV indices (triangular index and TINN)
+- [`ecgHRVnonlinear()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVnonlinear.md)
+  : Nonlinear HRV Analysis (Convenience Wrapper)
+- [`ecgHRVpoincare()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVpoincare.md)
+  : Poincare Plot Descriptors for HRV Analysis
+- [`ecgHRVsegmented()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVsegmented.md)
+  : Segmented (long-term) HRV indices: SDANN and SDNN index
+- [`ecgHRVtime()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVtime.md)
+  : HRV Time-Domain Metrics
+- [`ecgHRVtimevarying()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVtimevarying.md)
+  : Time-Varying HRV (Sliding-Window Time and Frequency Metrics)
+- [`ecgIntervals()`](https://x-biosignal.github.io/PhysioECG/reference/ecgIntervals.md)
+  : Compute ECG Intervals from Delineation
+- [`ecgPRSA()`](https://x-biosignal.github.io/PhysioECG/reference/ecgPRSA.md)
+  : Phase-Rectified Signal Averaging (PRSA): DC and AC
+- [`ecgProcess()`](https://x-biosignal.github.io/PhysioECG/reference/ecgProcess.md)
+  : One-Call ECG Processing Pipeline
+- [`ecgQualityCheck()`](https://x-biosignal.github.io/PhysioECG/reference/ecgQualityCheck.md)
+  : Detect Ectopic Beats in RR Interval Data
+- [`ecgRRcorrect()`](https://x-biosignal.github.io/PhysioECG/reference/ecgRRcorrect.md)
+  : Correct Ectopic Beats in RR Interval Data
+- [`ecgRRintervals()`](https://x-biosignal.github.io/PhysioECG/reference/ecgRRintervals.md)
+  : Compute RR Intervals from Detected R-Peaks
+- [`ecgRSA()`](https://x-biosignal.github.io/PhysioECG/reference/ecgRSA.md)
+  : Respiratory Sinus Arrhythmia (RSA)
+- [`ecgSampleEntropy()`](https://x-biosignal.github.io/PhysioECG/reference/ecgSampleEntropy.md)
+  : Sample Entropy of RR Intervals
+- [`ecgSignalQuality()`](https://x-biosignal.github.io/PhysioECG/reference/ecgSignalQuality.md)
+  : Assess ECG Signal Quality Per Channel
+- [`make_ecg()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg.md)
+  : Create Simulated ECG PhysioExperiment
+- [`make_ecg_irregular()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg_irregular.md)
+  : Create Simulated ECG with Irregular R-R Intervals
+- [`make_ecg_noisy()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg_noisy.md)
+  : Create Simulated ECG with Noise Artifacts
+- [`make_ecg_pqrst()`](https://x-biosignal.github.io/PhysioECG/reference/make_ecg_pqrst.md)
+  : Create Simulated ECG with PQRST Morphology
+- [`make_ppg()`](https://x-biosignal.github.io/PhysioECG/reference/make_ppg.md)
+  : Simulate PPG with known fiducials
+- [`perfusionIndex()`](https://x-biosignal.github.io/PhysioECG/reference/perfusionIndex.md)
+  : Calculate the PPG perfusion index
+- [`plotEcgWave()`](https://x-biosignal.github.io/PhysioECG/reference/plotEcgWave.md)
+  : Plot Annotated ECG Waveform
+- [`plotHRVpsd()`](https://x-biosignal.github.io/PhysioECG/reference/plotHRVpsd.md)
+  : Plot HRV Power Spectral Density with Frequency Bands
+- [`plotPoincare()`](https://x-biosignal.github.io/PhysioECG/reference/plotPoincare.md)
+  : Plot Poincare (Lorenz) Recurrence Map
+- [`plotTachogram()`](https://x-biosignal.github.io/PhysioECG/reference/plotTachogram.md)
+  : Plot RR Tachogram
+- [`ppgDetectPulses()`](https://x-biosignal.github.io/PhysioECG/reference/ppgDetectPulses.md)
+  : Detect systolic peaks in PPG
+- [`ppgQuality()`](https://x-biosignal.github.io/PhysioECG/reference/ppgQuality.md)
+  : Assess PPG signal quality
+- [`ppgRespiration()`](https://x-biosignal.github.io/PhysioECG/reference/ppgRespiration.md)
+  : Estimate respiration from PPG modulation
+- [`pulseRateVariability()`](https://x-biosignal.github.io/PhysioECG/reference/pulseRateVariability.md)
+  : Calculate pulse-rate variability
+- [`pulseWaveFeatures()`](https://x-biosignal.github.io/PhysioECG/reference/pulseWaveFeatures.md)
+  : Extract PPG pulse-wave features
+- [`respiratoryOnsets()`](https://x-biosignal.github.io/PhysioECG/reference/respiratoryOnsets.md)
+  : Detect respiratory cycle onsets
+- [`ripCalibrate()`](https://x-biosignal.github.io/PhysioECG/reference/ripCalibrate.md)
+  : Calibrate two-belt respiratory inductance plethysmography
+- [`smoothnessPriorsDetrend()`](https://x-biosignal.github.io/PhysioECG/reference/smoothnessPriorsDetrend.md)
+  : Smoothness-priors detrending
+- [`tidalMetrics()`](https://x-biosignal.github.io/PhysioECG/reference/tidalMetrics.md)
+  : Calculate tidal breathing metrics
+- [`ventilatoryThreshold()`](https://x-biosignal.github.io/PhysioECG/reference/ventilatoryThreshold.md)
+  : Detect ventilatory thresholds from incremental exercise data
+
+# Articles
+
+### Articles
+
+- [ECG Analysis: R-Peak Detection and HRV
+  Pipeline](https://x-biosignal.github.io/PhysioECG/articles/ecg-analysis.md):
+- [ECG Morphology: PQRST Segmentation and Interval
+  Analysis](https://x-biosignal.github.io/PhysioECG/articles/ecg-morphology.md):
