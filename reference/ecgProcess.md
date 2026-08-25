@@ -57,7 +57,7 @@ ecgProcess(
 The (baseline-corrected) PhysioExperiment with an `ecg` entry in
 `metadata()` holding `peaks`, `rr` (with ectopic flags), `rr_corrected`,
 `bsqi` and the detect-assay name, plus a provenance record appended via
-[`withProvenance`](https://x-biosignal.r-universe.dev/PhysioCore/reference/withProvenance.html).
+[`withProvenance`](https://x-biosignal.github.io/PhysioCore//reference/withProvenance.html).
 
 ## See also
 
