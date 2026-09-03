@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,14 @@
       <small>Source: <a href="https://github.com/x-biosignal/PhysioECG/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.2" id="physioecg-032">PhysioECG 0.3.2<a class="anchor" aria-label="anchor" href="#physioecg-032"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-0-3-2">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-3-2"></a></h3>
+<ul><li>
+<code><a href="../reference/ecgDFA.html">ecgDFA()</a></code> (and the internal <code>.dfa_alpha1()</code> used by <code><a href="../reference/ecgDFArolling.html">ecgDFArolling()</a></code>) now generate <strong>logarithmically-spaced</strong> scales instead of linearly-spaced ones. With linear spacing, a long RR series (where <code>n/4</code> is far larger than 64) left the short-range window <code>[4, 16]</code> with a single scale and the long-range window <code>[16, 64]</code> empty, so the slope fits returned <code>NA</code> — <code><a href="../reference/ecgDFA.html">ecgDFA()</a></code> produced <code>alpha1 = alpha2 = NA</code> on real overnight recordings (thousands of beats) even though it worked on short (a few-hundred-beat) test series. DFA requires log-spaced scales; both windows are now populated and <code>alpha1</code>/<code>alpha2</code> are computed correctly. Verified on synthetic signals with known exponents (white noise → α ≈ 0.5, random walk → α ≈ 1.5) and against <code>nolds.dfa</code>. Added regression tests covering a long (6000-beat) series and the known exponents.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="physioecg-031">PhysioECG 0.3.1<a class="anchor" aria-label="anchor" href="#physioecg-031"></a></h2>
 <div class="section level3">

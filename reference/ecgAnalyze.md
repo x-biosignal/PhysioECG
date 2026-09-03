@@ -49,5 +49,5 @@ ecgAnalyze(ecgProcess(pe))
 #>      lf_nu    hf_nu total_power HRV_triangular_index    TINN      sd1      sd2
 #> 1 8.270283 91.72972     2.15185              1.62069 23.4375 3.106644 2.027856
 #>   sample_entropy   alpha1     alpha2 qt_ms qtc_bazett qrs_ms
-#> 1       1.642228 0.266313 0.06624923   474   525.1299    128
+#> 1       1.642228 0.266313 0.06310743   474   525.1299    128
 ```

@@ -1,5 +1,27 @@
 # Changelog
 
+## PhysioECG 0.3.2
+
+### Bug fixes
+
+- [`ecgDFA()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFA.md)
+  (and the internal `.dfa_alpha1()` used by
+  [`ecgDFArolling()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFArolling.md))
+  now generate **logarithmically-spaced** scales instead of
+  linearly-spaced ones. With linear spacing, a long RR series (where
+  `n/4` is far larger than 64) left the short-range window `[4, 16]`
+  with a single scale and the long-range window `[16, 64]` empty, so the
+  slope fits returned `NA` —
+  [`ecgDFA()`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFA.md)
+  produced `alpha1 = alpha2 = NA` on real overnight recordings
+  (thousands of beats) even though it worked on short (a
+  few-hundred-beat) test series. DFA requires log-spaced scales; both
+  windows are now populated and `alpha1`/`alpha2` are computed
+  correctly. Verified on synthetic signals with known exponents (white
+  noise → α ≈ 0.5, random walk → α ≈ 1.5) and against `nolds.dfa`. Added
+  regression tests covering a long (6000-beat) series and the known
+  exponents.
+
 ## PhysioECG 0.3.1
 
 ### Validation
