@@ -1,5 +1,17 @@
 # Changelog
 
+## PhysioECG 0.4.1
+
+### New features
+
+- [`ecgHRVautonomic()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVautonomic.md)
+  — cardiac autonomic indices (Toichi 1997) from the Poincare 4-SD box:
+  the Cardiac Sympathetic Index (CSI = L/T = SD2/SD1), the Cardiac Vagal
+  Index (CVI = log10(L\*T)), and the Modified CSI (L^2/T; Jeppesen 2014,
+  seizure detection). SD1 = SDSD/sqrt(2) (universal), SD2 = geometric
+  paired-projection. Reproduces NeuroKit2’s `hrv_nonlinear`
+  CSI/CVI/CSI_Modified bit-for-bit.
+
 ## PhysioECG 0.4.0
 
 ### New features

@@ -36,6 +36,8 @@
   : Heart-Rate Turbulence (HRT)
 - [`ecgHRVasymmetry()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVasymmetry.md)
   : Heart-Rate Asymmetry (Poincare Plot Asymmetry) Descriptors
+- [`ecgHRVautonomic()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVautonomic.md)
+  : Cardiac Autonomic Indices (Toichi CSI / CVI) from the Poincare Plot
 - [`ecgHRVfreq()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVfreq.md)
   : HRV Frequency-Domain Analysis
 - [`ecgHRVgeometric()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVgeometric.md)
