@@ -34,6 +34,8 @@
   : Heart-Rate Recovery (HRR)
 - [`ecgHRT()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRT.md)
   : Heart-Rate Turbulence (HRT)
+- [`ecgHRVasymmetry()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVasymmetry.md)
+  : Heart-Rate Asymmetry (Poincare Plot Asymmetry) Descriptors
 - [`ecgHRVfreq()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVfreq.md)
   : HRV Frequency-Domain Analysis
 - [`ecgHRVgeometric()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVgeometric.md)

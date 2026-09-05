@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,14 @@
       <small>Source: <a href="https://github.com/x-biosignal/PhysioECG/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="physioecg-040">PhysioECG 0.4.0<a class="anchor" aria-label="anchor" href="#physioecg-040"></a></h2>
+<div class="section level3">
+<h3 id="new-features-0-4-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-0"></a></h3>
+<ul><li>
+<code><a href="../reference/ecgHRVasymmetry.html">ecgHRVasymmetry()</a></code> — heart-rate asymmetry (HRA) Poincare-plot asymmetry descriptors (Guzik 2006; Piskorski &amp; Guzik 2011): the Guzik/Slope/Area/Porta indices (GI/SI/AI/PI) and the deceleration/acceleration contributions to short-term (C1d/C1a), long-term (C2d/C2a), and total (Cd/Ca) HRV. Quantifies the temporal irreversibility of heart-rate dynamics — decelerations (RR prolongations) and accelerations (shortenings) contribute unequally to variability. Complements the symmetric <code><a href="../reference/ecgHRVpoincare.html">ecgHRVpoincare()</a></code> (SD1/SD2). Reproduces NeuroKit2’s <code>hrv_nonlinear</code> HRA indices bit-for-bit (max |diff| ~1e-14).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.2" id="physioecg-032">PhysioECG 0.3.2<a class="anchor" aria-label="anchor" href="#physioecg-032"></a></h2>
 <div class="section level3">

@@ -1,5 +1,21 @@
 # Changelog
 
+## PhysioECG 0.4.0
+
+### New features
+
+- [`ecgHRVasymmetry()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVasymmetry.md)
+  — heart-rate asymmetry (HRA) Poincare-plot asymmetry descriptors
+  (Guzik 2006; Piskorski & Guzik 2011): the Guzik/Slope/Area/Porta
+  indices (GI/SI/AI/PI) and the deceleration/acceleration contributions
+  to short-term (C1d/C1a), long-term (C2d/C2a), and total (Cd/Ca) HRV.
+  Quantifies the temporal irreversibility of heart-rate dynamics —
+  decelerations (RR prolongations) and accelerations (shortenings)
+  contribute unequally to variability. Complements the symmetric
+  [`ecgHRVpoincare()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVpoincare.md)
+  (SD1/SD2). Reproduces NeuroKit2’s `hrv_nonlinear` HRA indices
+  bit-for-bit (max \|diff\| ~1e-14).
+
 ## PhysioECG 0.3.2
 
 ### Bug fixes
