@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   ecg-analysis: ecg-analysis.html
   ecg-morphology: ecg-morphology.html
-last_built: 2026-09-05T09:59Z
+last_built: 2026-09-06T16:08Z
 urls:
   reference: https://x-biosignal.github.io/PhysioECG/reference
   article: https://x-biosignal.github.io/PhysioECG/articles

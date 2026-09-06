@@ -13,7 +13,7 @@ histogram (TINN)."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,9 @@ histogram (TINN).</p>
 
 
 <dl><dt id="arg-rr">rr<a class="anchor" aria-label="anchor" href="#arg-rr"></a></dt>
-<dd><p>Numeric vector of NN/RR intervals in milliseconds.</p></dd>
+<dd><p>Numeric vector of NN/RR intervals in milliseconds, or a data frame
+with an <code>rr_ms</code> column (as produced by the RR-interval readers); a data
+frame is reduced to its <code>rr_ms</code> column.</p></dd>
 
 
 <dt id="arg-bin-ms">bin_ms<a class="anchor" aria-label="anchor" href="#arg-bin-ms"></a></dt>

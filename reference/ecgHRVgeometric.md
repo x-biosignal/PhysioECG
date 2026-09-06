@@ -15,7 +15,9 @@ ecgHRVgeometric(rr, bin_ms = 7.8125)
 
 - rr:
 
-  Numeric vector of NN/RR intervals in milliseconds.
+  Numeric vector of NN/RR intervals in milliseconds, or a data frame
+  with an `rr_ms` column (as produced by the RR-interval readers); a
+  data frame is reduced to its `rr_ms` column.
 
 - bin_ms:
 

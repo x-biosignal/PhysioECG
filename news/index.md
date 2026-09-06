@@ -1,5 +1,18 @@
 # Changelog
 
+## PhysioECG 0.4.2
+
+### Minor improvements
+
+- [`ecgHRVgeometric()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVgeometric.md)
+  now also accepts an RR **data frame** (with an `rr_ms` column, as
+  produced by the RR-interval readers), not only a numeric vector —
+  aligning its interface with
+  [`ecgHRVtime()`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVtime.md).
+  Its HRV triangular index (HTI) is cross-tool certified against
+  `NeuroKit2.hrv_time` HRV_HTI (bit-for-bit) on real Fantasia RR; TINN
+  differs by a documented triangular-interpolation convention.
+
 ## PhysioECG 0.4.1
 
 ### New features

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,14 @@
       <small>Source: <a href="https://github.com/x-biosignal/PhysioECG/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.2" id="physioecg-042">PhysioECG 0.4.2<a class="anchor" aria-label="anchor" href="#physioecg-042"></a></h2>
+<div class="section level3">
+<h3 id="minor-improvements-0-4-2">Minor improvements<a class="anchor" aria-label="anchor" href="#minor-improvements-0-4-2"></a></h3>
+<ul><li>
+<code><a href="../reference/ecgHRVgeometric.html">ecgHRVgeometric()</a></code> now also accepts an RR <strong>data frame</strong> (with an <code>rr_ms</code> column, as produced by the RR-interval readers), not only a numeric vector — aligning its interface with <code><a href="../reference/ecgHRVtime.html">ecgHRVtime()</a></code>. Its HRV triangular index (HTI) is cross-tool certified against <code>NeuroKit2.hrv_time</code> HRV_HTI (bit-for-bit) on real Fantasia RR; TINN differs by a documented triangular-interpolation convention.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.1" id="physioecg-041">PhysioECG 0.4.1<a class="anchor" aria-label="anchor" href="#physioecg-041"></a></h2>
 <div class="section level3">
