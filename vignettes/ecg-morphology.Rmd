@@ -1,0 +1,306 @@
+---
+title: "ECG Morphology: PQRST Segmentation and Interval Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ECG Morphology: PQRST Segmentation and Interval Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+Beyond heart rate and HRV analysis, the morphology of individual ECG
+waveforms carries important clinical and research information. PhysioECG
+provides functions for PQRST waveform delineation and computation of
+standard clinical ECG intervals (PR, QT, QTc, QRS duration).
+
+This vignette demonstrates:
+
+1. Generating synthetic ECG with known PQRST morphology
+2. R-peak detection as the entry point for morphology analysis
+3. PQRST waveform delineation (P-wave, QRS complex, T-wave)
+4. Computing clinical ECG intervals
+5. QT interval analysis and Bazett correction
+
+## Setup
+
+```{r setup}
+library(PhysioECG)
+library(PhysioCore)
+```
+
+## Simulating ECG with PQRST Morphology
+
+The `make_ecg_pqrst()` generator creates synthetic ECG signals with
+physiologically realistic P, Q, R, S, and T wave components. It also
+returns a data.frame of known fiducial points for validation.
+
+```{r simulate}
+result <- make_ecg_pqrst(
+  n_time = 10000,   # 20 seconds at 500 Hz
+  n_channels = 1,
+  sr = 500,
+  heart_rate = 72,
+  noise_sd = 0.02
+)
+
+pe <- result$pe
+fiducials <- result$fiducials
+head(fiducials)
+```
+
+The `fiducials` data.frame includes columns for each known wave location
+(`r_peak`, `p_peak`, `q_point`, `s_point`, `t_peak`) and QRS boundaries
+(`qrs_onset`, `qrs_offset`), all in sample indices.
+
+## R-Peak Detection
+
+Morphology analysis begins with R-peak detection. The Pan-Tompkins
+algorithm reliably identifies R-peaks even in the presence of moderate
+noise.
+
+```{r rpeaks}
+peaks <- ecgDetectRpeaks(pe)
+head(peaks)
+```
+
+Compare detected peaks against known fiducial points:
+
+```{r validate-peaks}
+# Check detection accuracy
+n_detected <- nrow(peaks)
+n_expected <- nrow(fiducials)
+cat(sprintf("Detected %d peaks, expected %d\n", n_detected, n_expected))
+```
+
+## PQRST Waveform Delineation
+
+The `ecgDelineate()` function identifies the full PQRST complex for each
+detected R-peak:
+
+- **QRS onset** and **QRS offset** (J-point): detected using gradient-based
+  search from the R-peak
+- **P-wave peak**: local maximum in the 300--80 ms window before the R-peak
+- **T-wave peak**: local maximum in the 80--500 ms window after the R-peak
+- **T-wave end**: estimated using the tangent-intercept method from the
+  T-wave downslope
+
+```{r delineate}
+delin <- ecgDelineate(pe, peaks)
+head(delin)
+```
+
+The result contains one row per beat with columns: `channel`, `beat`,
+`r_peak`, `qrs_onset`, `qrs_offset`, `qrs_duration_ms`, `p_peak`,
+`t_peak`, and `t_end`.
+
+### Understanding Delineation Output
+
+```{r delineation-summary}
+# QRS duration distribution
+summary(delin$qrs_duration_ms)
+
+# P-wave detection rate
+p_detected <- sum(!is.na(delin$p_peak))
+cat(sprintf("P-wave detected in %d/%d beats (%.0f%%)\n",
+            p_detected, nrow(delin), 100 * p_detected / nrow(delin)))
+
+# T-wave detection rate
+t_detected <- sum(!is.na(delin$t_peak))
+cat(sprintf("T-wave detected in %d/%d beats (%.0f%%)\n",
+            t_detected, nrow(delin), 100 * t_detected / nrow(delin)))
+```
+
+### Validating Against Known Fiducials
+
+When using simulated data with known fiducial points, you can assess
+delineation accuracy:
+
+```{r validate-delineation}
+# Match detected beats to known fiducials by closest R-peak
+matched <- merge(
+  delin,
+  fiducials,
+  by.x = "beat",
+  by.y = "beat",
+  suffixes = c("_detected", "_true")
+)
+
+# QRS onset accuracy (in samples)
+onset_error <- matched$qrs_onset - matched$qrs_onset
+cat(sprintf("QRS onset error: mean = %.1f samples, SD = %.1f samples\n",
+            mean(onset_error, na.rm = TRUE),
+            sd(onset_error, na.rm = TRUE)))
+```
+
+## Computing Clinical ECG Intervals
+
+The `ecgIntervals()` function calculates standard clinical ECG intervals
+from the delineation output:
+
+- **PR interval**: P-wave peak to QRS onset (ms)
+- **QT interval**: QRS onset to T-wave end (ms)
+- **QTc**: Corrected QT using Bazett's formula (QT / sqrt(RR in seconds))
+- **QRS duration**: QRS onset to QRS offset (ms)
+- **RR interval**: R-peak to next R-peak (ms)
+
+```{r intervals}
+intervals <- ecgIntervals(delin, sr = samplingRate(pe))
+head(intervals)
+```
+
+### QRS Duration Analysis
+
+Normal QRS duration is 80--120 ms. Prolonged QRS may indicate bundle
+branch block or ventricular conduction abnormalities.
+
+```{r qrs-analysis}
+# Summary statistics
+summary(intervals$qrs_ms)
+
+# Identify beats with prolonged QRS (> 120 ms)
+prolonged <- intervals[intervals$qrs_ms > 120, ]
+cat(sprintf("Beats with prolonged QRS: %d/%d\n",
+            nrow(prolonged), nrow(intervals)))
+```
+
+### PR Interval Analysis
+
+Normal PR interval is 120--200 ms. Shortened PR may indicate
+pre-excitation (WPW syndrome); prolonged PR suggests first-degree AV block.
+
+```{r pr-analysis}
+# Filter beats with detected P-waves
+pr_valid <- intervals[!is.na(intervals$pr_ms), ]
+summary(pr_valid$pr_ms)
+
+# Check for PR prolongation
+pr_prolonged <- pr_valid[pr_valid$pr_ms > 200, ]
+cat(sprintf("Beats with prolonged PR: %d/%d\n",
+            nrow(pr_prolonged), nrow(pr_valid)))
+```
+
+### QT Interval and Bazett Correction
+
+The QT interval represents ventricular depolarization and repolarization.
+Because QT varies with heart rate, the corrected QT (QTc) using Bazett's
+formula is preferred for clinical assessment. Normal QTc is below 440 ms
+for males and 460 ms for females.
+
+```{r qt-analysis}
+# Filter beats with valid QT measurements
+qt_valid <- intervals[!is.na(intervals$qt_ms) & !is.na(intervals$qtc_ms), ]
+summary(qt_valid$qt_ms)
+summary(qt_valid$qtc_ms)
+
+# Check for QTc prolongation (> 460 ms)
+qtc_prolonged <- qt_valid[qt_valid$qtc_ms > 460, ]
+cat(sprintf("Beats with prolonged QTc: %d/%d\n",
+            nrow(qtc_prolonged), nrow(qt_valid)))
+```
+
+### Beat-to-Beat Variability
+
+Examine how intervals change across beats:
+
+```{r variability}
+# QT variability index
+if (nrow(qt_valid) > 2) {
+  qt_sd <- sd(qt_valid$qt_ms, na.rm = TRUE)
+  rr_sd <- sd(qt_valid$rr_ms, na.rm = TRUE)
+  cat(sprintf("QT SD: %.1f ms, RR SD: %.1f ms\n", qt_sd, rr_sd))
+}
+```
+
+## Complete Morphology Analysis Pipeline
+
+Here is a full pipeline from raw ECG to morphology analysis:
+
+```{r pipeline}
+# 1. Simulate or load ECG data
+result <- make_ecg_pqrst(
+  n_time = 60000,  # 2 minutes at 500 Hz
+  sr = 500,
+  heart_rate = 70,
+  noise_sd = 0.02
+)
+pe <- result$pe
+
+# 2. Optional: correct baseline wander
+pe <- ecgBaselineCorrect(pe, method = "highpass", cutoff = 0.5,
+                         output_assay = "clean")
+
+# 3. Detect R-peaks
+peaks <- ecgDetectRpeaks(pe, assay_name = "clean")
+
+# 4. Delineate PQRST waveforms
+delin <- ecgDelineate(pe, peaks, assay_name = "clean")
+
+# 5. Compute clinical intervals
+intervals <- ecgIntervals(delin, sr = samplingRate(pe))
+
+# 6. Summary report
+cat("=== ECG Morphology Summary ===\n")
+cat(sprintf("Total beats analyzed: %d\n", nrow(intervals)))
+cat(sprintf("Mean QRS duration: %.1f ms (SD: %.1f)\n",
+            mean(intervals$qrs_ms, na.rm = TRUE),
+            sd(intervals$qrs_ms, na.rm = TRUE)))
+cat(sprintf("Mean PR interval: %.1f ms (SD: %.1f)\n",
+            mean(intervals$pr_ms, na.rm = TRUE),
+            sd(intervals$pr_ms, na.rm = TRUE)))
+cat(sprintf("Mean QTc: %.1f ms (SD: %.1f)\n",
+            mean(intervals$qtc_ms, na.rm = TRUE),
+            sd(intervals$qtc_ms, na.rm = TRUE)))
+cat(sprintf("Mean RR interval: %.1f ms (SD: %.1f)\n",
+            mean(intervals$rr_ms, na.rm = TRUE),
+            sd(intervals$rr_ms, na.rm = TRUE)))
+```
+
+## Handling Multi-Channel ECG
+
+Both delineation and interval functions handle multi-channel ECG data.
+Results are computed independently per channel.
+
+```{r multi-channel}
+# Create multi-channel ECG
+result_mc <- make_ecg_pqrst(n_time = 10000, n_channels = 3, sr = 500)
+pe_mc <- result_mc$pe
+
+peaks_mc <- ecgDetectRpeaks(pe_mc)
+delin_mc <- ecgDelineate(pe_mc, peaks_mc)
+intervals_mc <- ecgIntervals(delin_mc, sr = samplingRate(pe_mc))
+
+# Per-channel summary
+for (ch in unique(intervals_mc$channel)) {
+  ch_data <- intervals_mc[intervals_mc$channel == ch, ]
+  cat(sprintf("Channel %d: %d beats, mean QTc = %.1f ms\n",
+              ch, nrow(ch_data),
+              mean(ch_data$qtc_ms, na.rm = TRUE)))
+}
+```
+
+## References
+
+- Goldberger, A.L., et al. (2000). "PhysioBank, PhysioToolkit, and
+  PhysioNet: Components of a new research resource for complex physiologic
+  signals." *Circulation*, 101(23), e215--e220.
+- Pan, J. & Tompkins, W.J. (1985). "A real-time QRS detection algorithm."
+  *IEEE Transactions on Biomedical Engineering*, 32(3), 230--236.
+- Clifford, G.D., Azuaje, F. & McSharry, P.E. (2006). *Advanced Methods
+  and Tools for ECG Data Analysis*. Artech House.
+- Bazett, H.C. (1920). "An analysis of the time-relations of
+  electrocardiograms." *Heart*, 7, 353--370.
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```

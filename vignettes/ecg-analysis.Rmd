@@ -1,0 +1,271 @@
+---
+title: "ECG Analysis: R-Peak Detection and HRV Pipeline"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{ECG Analysis: R-Peak Detection and HRV Pipeline}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Introduction
+
+PhysioECG provides a complete pipeline for electrocardiogram (ECG) analysis
+built on the PhysioExperiment data model. This vignette demonstrates the
+core workflow: R-peak detection, RR interval computation, ectopic beat
+handling, and heart rate variability (HRV) analysis across time-domain,
+frequency-domain, and nonlinear methods.
+
+## Setup
+
+```{r setup}
+library(PhysioECG)
+library(PhysioCore)
+```
+
+## Simulating ECG Data
+
+PhysioECG includes data generators for creating synthetic ECG signals. The
+`make_ecg()` function produces a PhysioExperiment with Gaussian-shaped
+R-peaks at regular intervals.
+
+```{r simulate}
+# Create a 10-second ECG recording at 500 Hz with heart rate of 72 bpm
+pe <- make_ecg(n_time = 5000, n_channels = 1, sr = 500, heart_rate = 72)
+pe
+```
+
+For testing with realistic noise, use `make_ecg_noisy()`:
+
+```{r simulate-noisy}
+pe_noisy <- make_ecg_noisy(
+  n_time = 5000, sr = 500, heart_rate = 72,
+  baseline_amp = 0.3, powerline_amp = 0.1, noise_sd = 0.15
+)
+```
+
+## Signal Quality Assessment
+
+Before analysis, assess signal quality to identify channels with poor
+recording conditions.
+
+```{r quality}
+# Assess signal quality without peak information
+sq <- ecgSignalQuality(pe)
+sq
+```
+
+When R-peaks have been detected, passing them to `ecgSignalQuality()` enables
+QRS-based SNR estimation for more accurate quality metrics.
+
+```{r quality-with-peaks}
+peaks <- ecgDetectRpeaks(pe)
+sq <- ecgSignalQuality(pe, peaks = peaks)
+sq
+```
+
+## Baseline Correction
+
+Remove low-frequency baseline wander before R-peak detection for best
+results.
+
+```{r baseline}
+# High-pass moving-average subtraction (default)
+pe_clean <- ecgBaselineCorrect(pe_noisy, method = "highpass", cutoff = 0.5)
+
+# Alternatively, use running median subtraction
+pe_clean2 <- ecgBaselineCorrect(pe_noisy, method = "median", cutoff = 0.5)
+```
+
+## R-Peak Detection
+
+The `ecgDetectRpeaks()` function implements the Pan-Tompkins algorithm with
+adaptive dual-threshold classification. It automatically handles inverted
+ECG signals.
+
+```{r rpeaks}
+peaks <- ecgDetectRpeaks(pe, method = "pan_tompkins")
+head(peaks)
+```
+
+The result is a data.frame with columns `channel`, `sample`, `time_sec`,
+and `amplitude` for each detected R-peak.
+
+### Adjusting Detection Parameters
+
+For noisy signals or unusual heart rates, tune the detection parameters:
+
+```{r rpeaks-params}
+# Lower threshold for weak signals; increase refractory for slow heart rates
+peaks <- ecgDetectRpeaks(
+  pe,
+  threshold_factor = 0.4,
+  refractory_ms = 250
+)
+```
+
+## RR Interval Computation
+
+Compute RR intervals from the detected R-peaks. The resulting data.frame
+is the standard input for all HRV analysis functions.
+
+```{r rr}
+rr <- ecgRRintervals(pe, peaks)
+head(rr)
+```
+
+## Ectopic Beat Detection and Correction
+
+Before HRV analysis, identify and correct ectopic (abnormal) beats that
+can bias HRV metrics.
+
+```{r ectopic}
+# Detect ectopic beats using local median comparison
+rr_checked <- ecgQualityCheck(rr, threshold_ms = 300)
+table(rr_checked$is_ectopic)
+```
+
+Correct ectopic beats by interpolation or removal:
+
+```{r correct}
+# Linear interpolation (default) -- preserves series length
+rr_corrected <- ecgRRcorrect(rr_checked, method = "interpolate")
+
+# Or remove ectopic beats entirely
+rr_removed <- ecgRRcorrect(rr_checked, method = "remove")
+```
+
+## HRV Time-Domain Analysis
+
+Compute standard time-domain HRV metrics: SDNN, RMSSD, pNN50, mean RR,
+and mean heart rate.
+
+```{r hrv-time}
+hrv_time <- ecgHRVtime(rr_corrected)
+hrv_time
+```
+
+The Task Force of the European Society of Cardiology (1996) recommends a
+minimum recording length of 5 minutes for short-term HRV analysis.
+
+## HRV Frequency-Domain Analysis
+
+Compute frequency-domain HRV metrics using Welch's method or the
+Lomb-Scargle periodogram:
+
+```{r hrv-freq-welch}
+# Welch's method (resamples to uniform 4 Hz grid)
+hrv_freq <- ecgHRVfreq(rr_corrected, method = "welch")
+hrv_freq
+```
+
+```{r hrv-freq-lomb}
+# Lomb-Scargle periodogram (handles uneven sampling directly)
+hrv_freq_ls <- ecgHRVfreq(rr_corrected, method = "lomb")
+hrv_freq_ls
+```
+
+Standard frequency bands are VLF (0.003--0.04 Hz), LF (0.04--0.15 Hz),
+and HF (0.15--0.4 Hz). Custom bands can be specified:
+
+```{r hrv-freq-custom}
+hrv_freq_custom <- ecgHRVfreq(
+  rr_corrected,
+  vlf_band = c(0.003, 0.04),
+  lf_band = c(0.04, 0.15),
+  hf_band = c(0.15, 0.5)
+)
+```
+
+## HRV Nonlinear Analysis
+
+Compute nonlinear HRV metrics including Poincare plot descriptors (SD1,
+SD2), sample entropy, and detrended fluctuation analysis (DFA).
+
+### Individual Functions
+
+```{r hrv-nonlinear-individual}
+# Poincare plot descriptors
+poincare <- ecgHRVpoincare(rr_corrected)
+poincare
+
+# Sample entropy
+sampen <- ecgSampleEntropy(rr_corrected, m = 2, r_factor = 0.2)
+sampen
+
+# Detrended fluctuation analysis
+dfa <- ecgDFA(rr_corrected, short_range = c(4, 16), long_range = c(16, 64))
+dfa
+```
+
+### Convenience Wrapper
+
+Use `ecgHRVnonlinear()` to compute all nonlinear metrics at once:
+
+```{r hrv-nonlinear-all}
+hrv_nl <- ecgHRVnonlinear(rr_corrected)
+hrv_nl
+```
+
+## Complete Analysis Pipeline
+
+Here is a full pipeline from raw ECG to HRV metrics:
+
+```{r pipeline}
+# 1. Load or simulate ECG data
+pe <- make_ecg(n_time = 60000, n_channels = 1, sr = 500, heart_rate = 68)
+
+# 2. Assess signal quality
+sq <- ecgSignalQuality(pe)
+
+# 3. Correct baseline wander
+pe <- ecgBaselineCorrect(pe, method = "highpass", cutoff = 0.5,
+                         output_assay = "clean")
+
+# 4. Detect R-peaks on cleaned signal
+peaks <- ecgDetectRpeaks(pe, assay_name = "clean")
+
+# 5. Compute RR intervals
+rr <- ecgRRintervals(pe, peaks)
+
+# 6. Detect and correct ectopic beats
+rr <- ecgQualityCheck(rr, threshold_ms = 300)
+rr <- ecgRRcorrect(rr, method = "interpolate")
+
+# 7. Compute HRV metrics
+hrv_time <- ecgHRVtime(rr)
+hrv_freq <- ecgHRVfreq(rr, method = "welch")
+hrv_nl <- ecgHRVnonlinear(rr)
+
+# 8. Combine results
+list(
+  time_domain = hrv_time,
+  freq_domain = hrv_freq,
+  nonlinear = hrv_nl
+)
+```
+
+## References
+
+- Pan, J. & Tompkins, W.J. (1985). "A real-time QRS detection algorithm."
+  *IEEE Transactions on Biomedical Engineering*, 32(3), 230--236.
+- Task Force (1996). "Heart rate variability: Standards of measurement,
+  physiological interpretation and clinical use." *Circulation*, 93(5),
+  1043--1065.
+- Shaffer, F. & Ginsberg, J.P. (2017). "An overview of heart rate
+  variability metrics and norms." *Frontiers in Public Health*, 5, 258.
+- Clifford, G.D., Azuaje, F. & McSharry, P.E. (2006). *Advanced Methods
+  and Tools for ECG Data Analysis*. Artech House.
+
+## Session Info
+
+```{r session-info}
+sessionInfo()
+```

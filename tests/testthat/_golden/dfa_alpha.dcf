@@ -1,0 +1,10 @@
+Key: dfa_alpha
+Source: independent inline standard DFA (Peng et al. 1994): cumsum
+        profile + LOG-spaced scales + per-window stats::lm detrend +
+        log-log stats::lm slope; package uses hand-rolled .fast_lm.
+        Validated: white noise->alpha~0.5, Brownian->alpha~1.5, and
+        agrees with nolds.dfa. Fixed seed=99 512-beat RR series.
+        Regenerated after the log-spaced-scales bug fix (ecgDFA 0.3.2).
+Tolerance: 1e-08
+Captured: 2026-09-03 UTC
+R: 4.5.2

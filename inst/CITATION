@@ -1,0 +1,12 @@
+citHeader("To cite PhysioECG in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "PhysioECG: ECG Analysis Functions for PhysioExperiment Objects",
+  author   = person("Yusuke", "Matsui"),
+  year     = "2026",
+  note     = paste("R package version", meta$Version),
+  url      = "https://github.com/x-biosignal/PhysioECG"
+  # doi    = "10.5281/zenodo.XXXXXXX"  # add once minted
+)
+
