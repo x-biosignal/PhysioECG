@@ -91,11 +91,24 @@ for RR interval computation.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-pe <- make_ecg(n_time = 5000, sr = 500, heart_rate = 72)
+set.seed(1)
+pe <- make_ecg_pqrst(n_time = 5000, sr = 500, heart_rate = 72)$pe
 peaks <- ecgDetectRpeaks(pe)
 delin <- ecgDelineate(pe, peaks)
 intervals <- ecgIntervals(delin, samplingRate(pe))
 head(intervals)
-} # }
+#>   channel beat pr_ms qt_ms   qtc_ms qtc_bazett qtc_fridericia qtc_framingham
+#> 1       1    1   118   414 453.3330   453.3330       439.8234        439.564
+#> 2       1    2   118   476 521.2234   521.2234       505.6907        501.564
+#> 3       1    3   118   410 448.9530   448.9530       435.5739        435.564
+#> 4       1    4   104   498 545.3136   545.3136       529.0629        523.564
+#> 5       1    5   106   504 551.8836   551.8836       535.4372        529.564
+#> 6       1    6   120   566 619.7741   619.7741       601.3044        591.564
+#>   qtc_hodges qrs_ms rr_ms
+#> 1   434.8993     92   834
+#> 2   496.8993     86   834
+#> 3   430.8993     88   834
+#> 4   518.8993    104   834
+#> 5   524.8993    104   834
+#> 6   586.8993     96   834
 ```

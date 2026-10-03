@@ -96,5 +96,5 @@ pk <- ecgDetectRpeaks(pe)
 edr <- ecgEDR(pe, pk, method = "area")
 edr$resp_rate
 #>   channel resp_rate_hz resp_rate_bpm
-#> 1       1    0.2012139      12.07284
+#> 1       1    0.2047546      12.28527
 ```

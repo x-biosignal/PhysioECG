@@ -98,3 +98,20 @@ Journal of Physiology*, 295(2), R550–R557.
 for the symmetric Poincare descriptors (SD1/SD2),
 [`ecgDFA`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFA.md)
 for detrended fluctuation analysis.
+
+## Examples
+
+``` r
+set.seed(1)
+n <- 300
+time_sec <- cumsum(rep(0.85, n))
+rr_ms <- 850 + 30 * sin(2 * pi * 0.1 * time_sec) + rnorm(n, sd = 15)
+rr <- data.frame(channel = 1L, rr_ms = rr_ms, time_sec = time_sec)
+ecgHRVasymmetry(rr)
+#>   channel       gi       si       ai       pi       c1d       c1a    sd1d
+#> 1       1 49.90861 49.90732 49.91001 50.50167 0.5215768 0.4784232 12.3178
+#>       sd1a       c2d       c2a     sd2d     sd2a        cd        ca    sdnnd
+#> 1 11.79723 0.4836271 0.5163729 22.78211 23.54076 0.4917202 0.5082798 18.31329
+#>     sdnna
+#> 1 18.6191
+```

@@ -47,3 +47,18 @@ for detecting ectopic beats,
 for computing RR intervals,
 [`ecgHRVtime`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVtime.md)
 for time-domain HRV analysis.
+
+## Examples
+
+``` r
+set.seed(1)
+n <- 200
+rr_ms <- 800 + rnorm(n, sd = 20)
+rr_ms[100] <- 430                       # a premature (ectopic) beat
+rr <- data.frame(channel = 1L, rr_ms = rr_ms,
+                 time_sec = cumsum(rr_ms) / 1000)
+qc <- ecgQualityCheck(rr)
+corrected <- ecgRRcorrect(qc, method = "interpolate")
+attr(corrected, "pct_ectopic")
+#> [1] 0.5
+```

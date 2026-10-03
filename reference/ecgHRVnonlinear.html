@@ -11,7 +11,7 @@ the results into a single data.frame."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -134,6 +134,20 @@ Standards of measurement, physiological interpretation and clinical use."
 <code><a href="ecgHRVfreq.html">ecgHRVfreq</a></code> for frequency-domain HRV analysis.</p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">300</span></span></span>
+<span class="r-in"><span><span class="va">time_sec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.85</span>, <span class="va">n</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rr_ms</span> <span class="op">&lt;-</span> <span class="fl">850</span> <span class="op">+</span> <span class="fl">30</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin</a></span><span class="op">(</span><span class="fl">2</span> <span class="op">*</span> <span class="va">pi</span> <span class="op">*</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="va">time_sec</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>channel <span class="op">=</span> <span class="fl">1L</span>, rr_ms <span class="op">=</span> <span class="va">rr_ms</span>, time_sec <span class="op">=</span> <span class="va">time_sec</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ecgHRVnonlinear</span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   channel      sd1      sd2 sd1_sd2_ratio sample_entropy m        r   alpha1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1 17.05586 32.69271     0.5217021       2.139282 2 5.214817 1.278931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      alpha2 rhythm hrv_valid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0.1323355  sinus      TRUE</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

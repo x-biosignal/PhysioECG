@@ -109,9 +109,15 @@ for signal quality assessment.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+set.seed(1)
 pe <- make_ecg(n_time = 5000, sr = 500, heart_rate = 72)
 peaks <- ecgDetectRpeaks(pe)
 head(peaks)
-} # }
+#>   channel sample time_sec amplitude
+#> 1       1    417    0.832  1.550888
+#> 2       1    833    1.664  1.533792
+#> 3       1   1253    2.504  1.547007
+#> 4       1   1669    3.336  1.522755
+#> 5       1   2085    4.168  1.524870
+#> 6       1   2504    5.006  1.485367
 ```

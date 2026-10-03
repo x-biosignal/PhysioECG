@@ -62,10 +62,16 @@ for ectopic beat detection.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+set.seed(1)
 pe <- make_ecg(n_time = 5000, sr = 500, heart_rate = 60)
 peaks <- ecgDetectRpeaks(pe)
 rr <- ecgRRintervals(pe, peaks)
 head(rr)
-} # }
+#>   channel rr_ms time_sec
+#> 1       1  1004    0.996
+#> 2       1  1000    2.000
+#> 3       1   996    3.000
+#> 4       1   998    3.996
+#> 5       1  1006    4.994
+#> 6       1   998    6.000
 ```

@@ -1,5 +1,17 @@
 # Changelog
 
+## PhysioECG 0.4.3
+
+### Documentation
+
+- Runnable `@examples` added or corrected across 16 help pages. Each
+  runs offline in seconds, writes nothing outside
+  [`tempdir()`](https://rdrr.io/r/base/tempfile.html), and is executed
+  by `R CMD check`; anything needing a device, a download or an optional
+  backend is fenced with the reason stated.
+- The README’s quick start runs as written: it attaches the package,
+  builds its own inputs, and uses only hard dependencies.
+
 ## PhysioECG 0.4.2
 
 ### Minor improvements

@@ -72,3 +72,16 @@ for frequency-domain HRV analysis,
 for nonlinear HRV metrics,
 [`ecgQualityCheck`](https://x-biosignal.github.io/PhysioECG/reference/ecgQualityCheck.md)
 for ectopic beat detection before analysis.
+
+## Examples
+
+``` r
+set.seed(1)
+n <- 300
+time_sec <- cumsum(rep(0.85, n))
+rr_ms <- 850 + 30 * sin(2 * pi * 0.1 * time_sec) + rnorm(n, sd = 15)
+rr <- data.frame(channel = 1L, rr_ms = rr_ms, time_sec = time_sec)
+ecgHRVtime(rr)
+#>   channel  mean_rr     sdnn    rmssd   pnn50  mean_hr rhythm hrv_valid
+#> 1       1 850.8693 26.07409 24.08028 3.67893 70.51612  sinus      TRUE
+```

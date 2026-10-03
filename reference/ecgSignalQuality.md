@@ -69,3 +69,13 @@ for R-peak detection,
 for baseline wander correction,
 [`ecgQualityCheck`](https://x-biosignal.github.io/PhysioECG/reference/ecgQualityCheck.md)
 for ectopic beat detection.
+
+## Examples
+
+``` r
+set.seed(1)
+pe <- make_ecg_noisy(n_time = 5000, sr = 500)
+ecgSignalQuality(pe)
+#>   channel   snr_db baseline_wander saturation_ratio quality_score
+#> 1       1 2.188097       0.1366256            4e-04     0.6301153
+```

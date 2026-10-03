@@ -23,7 +23,7 @@ with decay).'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -174,11 +174,17 @@ analysis, <code><a href="ecgSignalQuality.html">ecgSignalQuality</a></code> for 
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pe</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_ecg.html">make_ecg</a></span><span class="op">(</span>n_time <span class="op">=</span> <span class="fl">5000</span>, sr <span class="op">=</span> <span class="fl">500</span>, heart_rate <span class="op">=</span> <span class="fl">72</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu">ecgDetectRpeaks</span><span class="op">(</span><span class="va">pe</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">peaks</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   channel sample time_sec amplitude</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1    417    0.832  1.550888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    833    1.664  1.533792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1   1253    2.504  1.547007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1   1669    3.336  1.522755</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1   2085    4.168  1.524870</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1   2504    5.006  1.485367</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -11,7 +11,7 @@ functions in this package."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -119,12 +119,18 @@ algorithm." <em>IEEE Transactions on Biomedical Engineering</em>, 32(3),
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">pe</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_ecg.html">make_ecg</a></span><span class="op">(</span>n_time <span class="op">=</span> <span class="fl">5000</span>, sr <span class="op">=</span> <span class="fl">500</span>, heart_rate <span class="op">=</span> <span class="fl">60</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">peaks</span> <span class="op">&lt;-</span> <span class="fu"><a href="ecgDetectRpeaks.html">ecgDetectRpeaks</a></span><span class="op">(</span><span class="va">pe</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu">ecgRRintervals</span><span class="op">(</span><span class="va">pe</span>, <span class="va">peaks</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   channel rr_ms time_sec</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1  1004    0.996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1  1000    2.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1   996    3.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1   998    3.996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1  1006    4.994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1   998    6.000</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

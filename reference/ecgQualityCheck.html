@@ -11,7 +11,7 @@ exceeding the threshold are marked as ectopic."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,6 +107,19 @@ Standards of measurement, physiological interpretation and clinical use."
 <code><a href="ecgSignalQuality.html">ecgSignalQuality</a></code> for signal quality assessment.</p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span></span></span>
+<span class="r-in"><span><span class="va">rr_ms</span> <span class="op">&lt;-</span> <span class="fl">800</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, sd <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rr_ms</span><span class="op">[</span><span class="fl">100</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">430</span>                       <span class="co"># a premature (ectopic) beat</span></span></span>
+<span class="r-in"><span><span class="va">rr</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>channel <span class="op">=</span> <span class="fl">1L</span>, rr_ms <span class="op">=</span> <span class="va">rr_ms</span>,</span></span>
+<span class="r-in"><span>                 time_sec <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">rr_ms</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">qc</span> <span class="op">&lt;-</span> <span class="fu">ecgQualityCheck</span><span class="op">(</span><span class="va">rr</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">qc</span><span class="op">$</span><span class="va">is_ectopic</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

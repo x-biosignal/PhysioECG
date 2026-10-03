@@ -92,10 +92,16 @@ for signal quality assessment.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-pe <- make_ecg(n_time = 5000, sr = 500, heart_rate = 72)
+set.seed(1)
+pe <- make_ecg_pqrst(n_time = 5000, sr = 500, heart_rate = 72)$pe
 peaks <- ecgDetectRpeaks(pe)
 delin <- ecgDelineate(pe, peaks)
 head(delin)
-} # }
+#>   channel beat r_peak qrs_onset qrs_offset qrs_duration_ms p_peak t_peak t_end
+#> 1       1    1    567       545        591              92    486    718   752
+#> 2       1    2    984       964       1007              86    905   1131  1202
+#> 3       1    3   1401      1379       1423              88   1320   1553  1584
+#> 4       1    4   1818      1789       1841             104   1737   1970  2038
+#> 5       1    5   2235      2207       2259             104   2154   2387  2459
+#> 6       1    6   2652      2628       2676              96   2568   2812  2911
 ```

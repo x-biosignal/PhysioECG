@@ -13,7 +13,7 @@ variance-based estimate is used."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">PhysioECG</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -129,6 +129,15 @@ variability metrics and norms." <em>Frontiers in Public Health</em>, 5, 258.
 <code><a href="ecgQualityCheck.html">ecgQualityCheck</a></code> for ectopic beat detection.</p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pe</span> <span class="op">&lt;-</span> <span class="fu"><a href="make_ecg_noisy.html">make_ecg_noisy</a></span><span class="op">(</span>n_time <span class="op">=</span> <span class="fl">5000</span>, sr <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ecgSignalQuality</span><span class="op">(</span><span class="va">pe</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   channel   snr_db baseline_wander saturation_ratio quality_score</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1 2.188097       0.1366256            4e-04     0.6301153</span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

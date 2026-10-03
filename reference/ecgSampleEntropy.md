@@ -67,3 +67,16 @@ for the combined nonlinear analysis wrapper,
 for Poincare plot descriptors,
 [`ecgDFA`](https://x-biosignal.github.io/PhysioECG/reference/ecgDFA.md)
 for detrended fluctuation analysis.
+
+## Examples
+
+``` r
+set.seed(1)
+n <- 300
+time_sec <- cumsum(rep(0.85, n))
+rr_ms <- 850 + 30 * sin(2 * pi * 0.1 * time_sec) + rnorm(n, sd = 15)
+rr <- data.frame(channel = 1L, rr_ms = rr_ms, time_sec = time_sec)
+ecgSampleEntropy(rr)
+#>   channel sample_entropy m        r
+#> 1       1       2.139282 2 5.214817
+```

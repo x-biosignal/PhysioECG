@@ -47,3 +47,17 @@ for computing RR intervals,
 for time-domain HRV analysis,
 [`ecgSignalQuality`](https://x-biosignal.github.io/PhysioECG/reference/ecgSignalQuality.md)
 for signal quality assessment.
+
+## Examples
+
+``` r
+set.seed(1)
+n <- 200
+rr_ms <- 800 + rnorm(n, sd = 20)
+rr_ms[100] <- 430                       # a premature (ectopic) beat
+rr <- data.frame(channel = 1L, rr_ms = rr_ms,
+                 time_sec = cumsum(rr_ms) / 1000)
+qc <- ecgQualityCheck(rr)
+sum(qc$is_ectopic)
+#> [1] 1
+```

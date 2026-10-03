@@ -57,3 +57,13 @@ for signal quality assessment,
 for R-peak detection,
 [`ecgQualityCheck`](https://x-biosignal.github.io/PhysioECG/reference/ecgQualityCheck.md)
 for ectopic beat detection.
+
+## Examples
+
+``` r
+set.seed(1)
+pe <- make_ecg_noisy(n_time = 5000, sr = 500)
+pe <- ecgBaselineCorrect(pe, method = "highpass")
+SummarizedExperiment::assayNames(pe)
+#> [1] "raw"                "baseline_corrected"
+```

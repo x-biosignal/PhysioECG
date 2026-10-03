@@ -63,3 +63,16 @@ for the combined nonlinear analysis wrapper,
 for sample entropy,
 [`ecgHRVpoincare`](https://x-biosignal.github.io/PhysioECG/reference/ecgHRVpoincare.md)
 for Poincare plot descriptors.
+
+## Examples
+
+``` r
+set.seed(1)
+n <- 300
+time_sec <- cumsum(rep(0.85, n))
+rr_ms <- 850 + 30 * sin(2 * pi * 0.1 * time_sec) + rnorm(n, sd = 15)
+rr <- data.frame(channel = 1L, rr_ms = rr_ms, time_sec = time_sec)
+ecgDFA(rr)
+#>   channel   alpha1    alpha2
+#> 1       1 1.278931 0.1323355
+```

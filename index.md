@@ -28,7 +28,7 @@ Or install the development version from GitHub:
 
 ``` r
 
-# install.packages("remotes")
+# install.packages("remotes", repos = "https://cloud.r-project.org")
 remotes::install_github("x-biosignal/PhysioECG")
 ```
 
