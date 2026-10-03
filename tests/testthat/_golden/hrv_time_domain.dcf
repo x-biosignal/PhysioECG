@@ -1,0 +1,7 @@
+Key: hrv_time_domain
+Source: independent base-R (stats::sd, sqrt(mean(diff^2)) for RMSSD,
+        100*mean(abs(diff)>50) for pNN50, 60000/mean for HR) on a fixed
+        seed=2024 256-beat RR series; ecgHRVtime(rhythm_check=FALSE)
+Tolerance: 1e-08
+Captured: 2026-07-10 23:59:42 UTC
+R: 4.5.2

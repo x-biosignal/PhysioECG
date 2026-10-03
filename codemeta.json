@@ -1,0 +1,40 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "PhysioECG",
+  "name": "PhysioECG: ECG Analysis Functions for PhysioExperiment Objects",
+  "version": "0.2.0",
+  "description": "Provides electrocardiography (ECG) analysis functions for PhysioExperiment objects. Includes R-peak detection (adaptive Pan-Tompkins), RR interval computation, HRV time-domain metrics (SDNN, RMSSD, pNN50), HRV frequency-domain analysis (VLF, LF, HF power), nonlinear HRV (Poincare, Sample Entropy, DFA), ECG morphology analysis (QRS boundaries, QT/QTc intervals), and signal quality assessment with ectopic beat correction.",
+  "license": "https://spdx.org/licenses/MIT",
+  "codeRepository": "https://github.com/x-biosignal/PhysioECG",
+  "issueTracker": "https://github.com/x-biosignal/PhysioECG/issues",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "R"
+  },
+  "runtimePlatform": "R",
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Yusuke",
+      "familyName": "Matsui",
+      "email": "mail.to.matsui@gmail.com"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Person",
+      "givenName": "Yusuke",
+      "familyName": "Matsui",
+      "email": "mail.to.matsui@gmail.com"
+    }
+  ],
+  "developmentStatus": "active",
+  "keywords": [
+    "physiological-signals",
+    "rehabilitation",
+    "biosignal",
+    "biomechanics",
+    "R"
+  ]
+}
